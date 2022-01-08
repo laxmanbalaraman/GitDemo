@@ -1,0 +1,12 @@
+touch file1.txt file2.txt
+code file1.txt file2.txt
+git status
+git add . (or) git add file1.txt file2.txt
+git diff --staged 
+git commit -m "Add file1 and file2"
+git log --oneline --all --graph
+git show (or) git show HEAD (or) git show e931c79 
+echo ocean >> file2.txt
+git diff
+git add file2.txt 
+git restore --staged file2.txt
