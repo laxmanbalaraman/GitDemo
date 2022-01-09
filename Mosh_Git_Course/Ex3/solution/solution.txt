@@ -1,0 +1,11 @@
+touch myfile.txt 
+code myfile.txt 
+git log --stat -2 (or) git log --patch -2
+git log --author="laxmanbalarman" --oneline
+git log --patch file1.txt
+git diff HEAD~1 HEAD
+git checkout HEAD~1
+git checkout main
+git blame file1.txt
+git tag v1.1
+git tag -d v1.1
