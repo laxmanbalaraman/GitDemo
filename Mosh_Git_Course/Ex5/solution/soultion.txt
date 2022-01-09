@@ -1,0 +1,50 @@
+John:
+git clone https://github.com/laxmanbalaraman/Demo.git John
+code file1.txt 
+git add . 
+git commit -m "Create collab file"
+git push
+Amy:
+git clone https://github.com/laxmanbalaraman/Demo.git Amy
+git fetch
+git log --oneline --all --graph 
+git merge origin/master
+git switch -C feature/login
+code AmyFile.txt
+git add .
+git commit -m "Add Amy's file"
+git push -u origin feature/login
+git branch -vv 
+git branch -r 
+John:
+git fetch 
+git log --oneline --all --graph 
+git branch -r
+git switch -C feature/login origin/feature/login 
+git branch -vv 
+git branch -r 
+Amy:
+git fetch 
+git code AmyFile.txt
+git commit -am "Update AmyFile"
+git push
+John:
+git switch feature/login 
+git pull 
+git log --oneline --all --graph
+git switch master 
+git merge feature/login 
+git log --oneline --all --graph 
+git push 
+git log --oneline --all --graph
+git push -d origin feature/login 
+git branch -vv 
+git branch -d feature/login
+Amy:
+git fetch 
+git log --oneline --all --graph 
+git switch master 
+git merge origin/master 
+git log --oneline --all —graph
+git remote prune origin 
+git branch -d feature/login 
