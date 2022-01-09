@@ -1,0 +1,39 @@
+git branch feature/login
+git branch 
+git switch feature/login
+code file1.txt
+git add .
+git commit -m "Modify file1.txt"
+git log --oneline --all --graph 
+git switch main
+git log master..feature/login
+git diff master..feature/login
+git merge feature/login
+git branch --merged 
+git branch --no-merged
+git branch -d feature/login
+git branch feature/logout
+code file1.txt
+git add .
+git commit -m "Another change to file1"
+git switch main
+code file1.txt
+git add .
+git commit -m "Add green to file1"
+git merge feature/logout
+git add file1.txt 
+git commit -m "Add blue to file1"
+git branch -d feature/logout
+git branch bugfix/login
+git switch bugfix/login
+code file1.txt
+git commit -am "Write orange to file1"
+git switch main
+code file2.txt
+git commit -am "Write green to file2.txt"
+git log --oneline --all --graph
+git switch bugfix/login
+git rebase main
+git checkout main
+git merge bugfix/logout (fast forward merging)
+git log --oneline --graph --all
