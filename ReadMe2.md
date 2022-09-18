@@ -47,7 +47,9 @@ git difftool --staged # for files in staging area
 
 ```
 git log
-git log --online # short one line description
+git log --online # short one line description : displays from where head is
+git log --online --all # displays all commits regardless of where head is
+git log <commit id> -<number> # display last n commits from that commit id
 ```
 
 **View changes in a commit**
@@ -57,6 +59,12 @@ _git-show is a command line utility that is used to view expanded details on Git
 ```
 git show <commit id>
 git show <wrt to head pointer> # eg: git show HEAD~2 -> show the commit that is two steps back from head
+```
+
+**View list of files changed in a commit**
+
+```
+git show <commit id> --name-status
 ```
 
 **List files in a commit**
@@ -91,4 +99,78 @@ _Note: `git rm --cached file`: removes the copy of the file from the index / sta
 
 ```
 git restore --source=HEAD~1 <file name>
+```
+
+**Set alias for command**
+
+```
+git config --global alias.unstage "restore --stage"
+```
+
+**Navigate between branches**
+
+```
+git checkout <commit id> # moves head to that commit
+```
+
+_Note: During checkout do not making any commit. Else the commit will become unreachable and useless called Dead Commit_
+
+**To find Which commit in your project histroy introduced bug**
+
+```
+# works like binary search to find the buggy commit
+
+git bisect start            # start bisect operation
+git bisect bad <commit id>  # tell bisect about the latest bad commit
+git bisect good <commit id> # tell bisect about the latest good commit
+
+# binary search start - head detaches to the mid of the good and bad
+
+git bisect bad  # if commit is found to be buggy
+git bisect good # if commit is found to be fine
+git reset       # so that head is attached back to the master after finding the buggy commit
+```
+
+**To view contributors of the repo**
+
+```
+git shortlog -s # s flag to show authors name only
+```
+
+**View History of log file**
+
+```
+git log --oneline <file name>
+git log --oneline --patch <file name>   # to view the actual changes in the file in each commit
+```
+
+**Tags**
+
+_Tags are ref's that point to specific points in Git history. Tagging is generally used to capture a point in history that is used for a marked version release (i.e. v1. 0.1)_
+
+```
+git tag     # view list of all tags
+git tag
+```
+
+- **LightWeight Tag** : A lightweight tag is very much like a branch that doesn’t change — it’s just a pointer to a specific commit.
+
+```
+git tag v1.0
+git tag -d v1.0 # delete tag
+```
+
+- **Annotated Tags** : Annotated tags, however, are stored as full objects in the Git database that shows the tagger information, the date the commit was tagged, and the annotation message before showing the commit information.
+
+```
+git tag -a v1.0 -m "My version  v1.0"
+git tag -d v1.0 # delete tag
+```
+
+_Note: Prefer Annoted Tags over Lightweight tags_
+
+We can Referencing with tags
+
+```
+git show v1.0
 ```
