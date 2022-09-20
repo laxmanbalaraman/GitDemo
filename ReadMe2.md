@@ -449,3 +449,118 @@ git fetch base  # fetch changes from the base repo
 git merge base/master
 git push    # push the base changes to our forked repo
 ```
+
+### Rewriting History
+
+**Dont rewrite public history!** <br/>
+if no one will get affected by your rewriting public history then go ahead force pushing. Now all the commits that have been updated after the your last recent fetch will get lost.
+
+```
+git push -f     # when github rejects due to conflicts with local repo and remote repo
+```
+
+_Note: However, rewriting history in local is a good practice, so that you can tidy up your histry and only push clean history to the remote repo._
+
+**Undoing commits**
+
+```
+git reset --[soft/hard/mixed] <commit id>
+```
+
+> Soft: Removes the commit only, all commit files are in staging area and unstaged files are unstaged <br/>
+> Mixed: All the commit and unstaged files become unstaged <br/>
+> Hard: All files are discarded - A state just after you make that commit
+
+**Revert a commit** <br/>
+
+If you made a bad commit and if its already pushed to your remote, Then don't `git reset --hard head~1`, this will rewrite public history and that could be dangerous! Instead make a new commit that undoes the changes of last bad commits.
+
+```
+git revert <parent commit id of bad commit> # git revert head~1
+git revert <parent commit id>..<bad commit id>  # revert commit in range
+e.g.: git revert head~3..head (or) git revert head~3.. # will automatically remove till head
+```
+
+_Note: Git revert in range will cause multiple reverts commits and makes the history ugly, instead use `--no-commit` to make one combined commit on behalf of all with our custom commit_
+
+```
+git revert head~3..head --no-commit
+```
+
+```
+git revert --continue   # move to next revert
+git revert --abort      # cancel the revert
+```
+
+**Recover a lost commit** <br/>
+
+The reflog is an ordered list of the commits that HEAD has pointed to. Its purely local.
+
+```
+git reflog
+```
+
+Fing the lost commit and then do `git reset --hard <commit id from reflog>`.
+
+**Amend a commit** <br/>
+
+Amending a commit is a way to modify the most recent commit you have made in your current branch. This can be helpful if you need to edit the commit message or if you forgot to include changes in the commit. you can also do the same thing using `git reset --mixed head~1`. If you want to delete a file in prev commit then uset `git reset`. [Rebasing to ammend commits illustration.](https://user-images.githubusercontent.com/67074796/191364005-b4cce155-067c-4ee1-8e44-00fe696c2b01.jpg). Here 'B' is the commit to be ammended. But new duplicate commits are also created for C and D as commits are immutable in git.
+
+```
+git commit --amend -m "<message>"
+```
+
+**Amend Earlier commit** <br/>
+
+we use rebasing to achieve it
+
+```
+git rebase -i <commit id of parent of amending commit>  # in the interactive mode change pick to edit, to ammend those commit(s).
+git commit --amend      # now amend the commit
+git rebase --continue   # to perform rebasing
+git rebase --abort      # if you screwed things up
+```
+
+**Drop a commit** <br/>
+
+Again we use rebasing for prev commits that is not latest
+
+```
+git rebase -i <commit id of parent of amending commit>      # in the interactive mode edit pick to drop or just delete those commit(s) lines
+```
+
+**Rewording a commit** <br/>
+
+If we the commit is the most recent one, then use `git commit --amend`. else again we use rebasing in interactive mode with reword key
+
+```
+git rebase -i <commit id of parent of amending commit>      # in the interactive mode edit pick to reword, to reword those commit(s)
+```
+
+**Reordering commit**<br/>
+
+Again we use rebasing. In the rebase interactive mode, just move the commit to the desired position.
+
+**Squasing commits** <br/>
+
+Again we use rebasing. In the rebase interactive mode, just change pick to `squash` of `fixup`. This will squash the commits. <br/>
+_Note: only apply squash/fixup to commit that need to be squash with the other commit. Not require for commit to which others will be squashed_ <br/>
+_Only difference between squash and fixuup is squash will combine commit message of all the commits that will be squashed, which again be edited in editor while fixup takes the commit of the commit to which other commits will be squashed, and applies that message to all._
+
+```
+git rebase -i <commit id of parent of amending commit>  # in the interactive mode edit pick to squash/fixup, to squash those commit(s)
+```
+
+- **_Note: In interactive rebasing, you can squash, fixup, reoder, reword, pick etc at same time_**
+
+**Split commits**
+
+Again we use rebasing. Nn the interactive mode change pick to edit. We now reset one step backwares using `git reset --mixed head~1`. Then do the approriate commits.
+
+```
+git rebase -i <commit id of parent of amending commit>  # in the interactive mode change pick to edit, to ammends those commit(s).
+git reset head^         # move 1 commit back head~1 = head^
+(git add <desired filename>, git commit -m) * n
+git rebase --continue   # to perform rebasing
+git rebase --abort      # if you screwed things up
+```
