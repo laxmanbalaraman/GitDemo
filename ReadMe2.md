@@ -351,3 +351,101 @@ _Note: May lead to conflicts, resolve conflicts if any in the process of cherry 
 ```
 git restore --source=<branch name> <filename>
 ```
+
+### Collaboration
+
+**Clone a repo**<br/>
+
+Create a copy of that repo at in a new directory/machine.
+
+```
+git clone <github repo url> <your-project-name>
+```
+
+**Get details of remote repo**
+
+```
+git remote -v
+```
+
+**Fetch contents from remote repo** <br/>
+used to download contents from a remote repository.
+
+```
+git fetch
+```
+
+_Note: use `git branch -vv` to see how our local and remote branch are diverging. use `git merge` to merge the remote branch with local branch_
+
+**Git pull**
+
+> **pull = fetch + Merge**
+
+Used to fetch and download content from a remote repository and immediately update (perform merge operation) the local repository to match that content
+
+```
+git pull [type of merge]
+git pull            # performs fast forward or 3-way merging depending on linearity of branches
+git pull --rebase   # fetch + rebasing
+```
+
+_Note: while rebasing local commits are added on top of orgin (remote) branch_
+
+**Git push** <br/>
+
+Used to upload local repository content to a remote repository.
+
+```
+git push
+```
+
+_Note: Before commiting make sure `origin/master` of local repo and `master` of remote remo are pointing to same commit. Only then make a push, else git will reject as the local and remote branch have been divereged._
+
+**Sharing Tags**<br/>
+
+Our tags aren't shared by git in general and needs to be pushed explictly.
+
+```
+git push origin <tag-name>                          # push tag
+git push origin --delete <tag-name></tag-name>      # delete tag
+```
+
+**Share Branches** <br/>
+
+Like Tags, we need to explicitly share branches <br/>
+
+```
+git push -u origin <branch-name>
+git push --delete origin <branch-name>
+```
+
+_Note: Even though you delete branch in remote is note deleted and you need to delete it explicitly using `git branch -d <branch-name>`_
+
+**Prune branches** <br/>
+
+If there are any branches that has been deleted in remote, then it is not updated in local even after fetch, so we use:
+
+```
+git remote prune origin
+```
+
+**Keeping forked repository up to date**
+
+```
+git remote  # show all remote repo
+git reomte -v  # show all remote repo with verbose (extra info)
+```
+
+Add another reference to base repo and push the changes to the forked repo. [illustration](https://user-images.githubusercontent.com/67074796/191335281-c731d732-41ba-4f01-ab6f-a820e57e5a50.jpg). <br/>
+
+```
+git remote add <any name of base repo> <base repo url>      # add a remote repo url
+git rename <old name> <new name>    # rename base repo alias
+git remote rm <base repo name>      # delete a remote refernce
+```
+
+```
+git fetch base  # fetch changes from the base repo
+git merge base/master
+git push    # push the base changes to our forked repo
+```
