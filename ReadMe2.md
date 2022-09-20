@@ -49,6 +49,7 @@ git difftool --staged # for files in staging area
 git log
 git log --online # short one line description : displays from where head is
 git log --online --all # displays all commits regardless of where head is
+git log --oneline --all --graph # visualise branches
 git log <commit id> -<number> # display last n commits from that commit id
 ```
 
@@ -193,6 +194,7 @@ git branch
 
 ```
 git switch <branch-name>
+git switch -C <branch-name>     # create and switch to the branch
 ```
 
 _Note: if your head is is behind any commits in general be it within main branch or sub branch then you cannot view the commits that are above ur head unless you use `git log --oneline --all`_
@@ -202,4 +204,150 @@ _Note: if your head is is behind any commits in general be it within main branch
 ```
 git branch -d <branch-name>     # if branch is merged
 git branch -D <branch-name>     # force delete
+```
+
+**Stashing**
+
+_Note: When do i use stashing? : When you have two same file in two commit/branches and you want to checkout your head to that commit/branch, then git tries to overwrite the files with the content in the "checkouting" commit/latest commit of branch. In that case the local changes in your current commit files is lost. In that case, to not let git overwrite your files, you stash. If one understands how checkout works then understanding stash is simple. Checkout updates the files in the working directory to match the version stored in that branch/commit, and it tells Git to record all new commits on that branch/commit_
+
+```
+git stash push -m "<message>"
+```
+
+**View stash list**
+
+```
+git stash list
+```
+
+**show files changes in stash**
+
+```
+git stash show <stash number> # git stash show 1 => refer stash number from stash list
+```
+
+**Bring back files to wokring directory**
+
+```
+git stash apply 1
+```
+
+**Delete a stash**
+
+```
+git stash drop 1
+```
+
+**Delete all files in stash**
+
+```
+git stash clear
+```
+
+### Merging
+
+- Fast forwarding: When two branch doesnt diverge [Fast-forwarding illustration](https://bitbucket.org/blog/wp-content/uploads/2018/07/what-is-a-fast-forward.gif)
+- 3-way merging: when two brach diverge (in this case we may resolve conflicts between two versions) [3-way merging illustration](https://www.w3docs.com/uploads/media/default/0001/03/492bbdd4d1c256ad4b07c9a042fd18fca353b1cc.png)
+
+**Fast forwarding**
+
+```
+git merge <branch name> # from the parent branch, applicable for both type of merge
+```
+
+```
+git merge --no-ff <branch name>     # no fast forward even when its possible
+```
+
+_Note: `No fast forward (--no-ff)` will merge branch with a new commit. So if we want to revert the feature brach then only one revert is needed while ff need n reverting where n is the number of commit in that sub branch. Also noff is the true representation of history_
+
+**View merge and no-merged branches**
+
+```
+git branch --merged
+git branch --no-merged
+```
+
+**Aborting a merge**
+
+_During merge conflicts we can abort that merge for time being_
+
+```
+git merge --abort
+```
+
+**Undo commits** (Applies to even undoing merge as merging is also a commit) <br/>
+
+<u>Three reset options </u> <br/>
+Hard: restores everything to the orginal state of that commit <br/>
+Mixed: will move every files ahead of pointing commmit into unstaged area _(Default)_<br/>
+Soft: will move every files (expcept unstaged files) ahead of pointing commmit into staged area <br/>
+
+```
+git reset --hard <commit id>
+git reset --mixed <commit id> (or) git reset <comit id>
+git reset --soft <commit id>
+```
+
+_Note: Undoing commits will rewrite history. Use this only in your local repository but not on the remote repository_
+
+**Reverting merge/commit**
+
+if you want to undo commits in remote repo as well then create a new commit that undoes the previos commit
+
+```
+git revert -m 1 HEAD
+```
+
+**Squash merging**
+
+We squash the commit(s) in the sub branch in to one sigle commit and add it on top of main branch. This is done to make main branch look linear as if no branch was created. Only single commit that does the job instead of many commit and merges polluting the branch. <br/>
+
+[Squash merging illustration](https://user-images.githubusercontent.com/67074796/191254285-40e048ae-9fab-4657-8686-581808d5c34f.jpg)
+
+```
+git merge --squash <branch-name>
+```
+
+_Note: This is not a merge though it is called merging as we are not actually merging the branch but only squashing the commits and appending it on top of the main branch. Make sure to delete the branch using `git branch -D <branch-name>`. `-D` because we are force deleting as the branch is not acutally merged._
+
+**Rebasing**
+
+Changing the base of the sub branch to the lastest commit in the parent branch. This is lead to a linear history.
+
+[Rebasing illustration](https://cms-assets.tutsplus.com/cdn-cgi/image/width=600/uploads/users/585/posts/23191/image/rebase-2.png)
+
+```
+# from the subranch
+git rebase master       # rebase the subranch to the latest commit is master
+```
+
+```
+git rebase --continue   # move on to next conflict if ther is any
+git rebase --skip       # skip a commit
+git rebase --abort      # abort rebasing
+```
+
+```
+# After rebasing head pointer can be moved to the latest commit by fast forwarding
+git merge <branch-name>     # This will fast forward as the history is now linear
+```
+
+_Note: Git accomplishes this by creating new commits and applying them to the specified base. It's very important to understand that even though the branch looks the same, it's composed of entirely new commits. This operation will rewrite history, so be careful!_
+
+**Cherry Picking a commit**
+
+Enables arbitrary Git commits to be picked by reference and appended to the current working HEAD.
+[Cherry picking illustration](https://www.junosnotes.com/wp-content/uploads/2021/07/how-do-i-cherry-pick-a-commit-in-Git.png)
+
+```
+git cherry-pick <commit id>     # this will add the commit on the top of the commit that head is pointing to.
+```
+
+_Note: May lead to conflicts, resolve conflicts if any in the process of cherry picking_
+
+**Picking files from another branch**
+
+```
+git restore --source=<branch name> <filename>
 ```
